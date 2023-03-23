@@ -5,6 +5,7 @@ specifiers:
   '@sveltejs/adapter-auto': ^2.0.0
   '@sveltejs/kit': ^1.5.0
   autoprefixer: ^10.4.14
+  file-icons-js: ^1.1.0
   firebase: ^9.18.0
   postcss: ^8.4.21
   prettier: ^2.8.0
@@ -17,6 +18,7 @@ specifiers:
   vite: ^4.2.0
 
 dependencies:
+  file-icons-js: 1.1.0
   firebase: 9.18.0
 
 devDependencies:
@@ -1163,6 +1165,10 @@ packages:
     engines: {node: '>=0.8.0'}
     dependencies:
       websocket-driver: 0.7.4
+    dev: false
+
+  /file-icons-js/1.1.0:
+    resolution: {integrity: sha512-EwR5RJoNIp5Wnzc+AF1oyBYZhOqPuPm0QHzfCaeh5KJpLB5lWIsxswiAwj3m8lIj7ddBzYBJDDnIr6IVrRCy8Q==}
     dev: false
 
   /fill-range/7.0.1:

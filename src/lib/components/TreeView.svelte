@@ -12,8 +12,11 @@
 
 	export let storageRef: StorageReference;
 
+	let loading = true;
+
 	let prefixes: StorageReference[] = [];
 	let items: StorageReference[] = [];
+
 	let selectItem: StorageReference;
 
 	$: if (selectItem) {
@@ -24,8 +27,15 @@
 
 	onMount(async () => {
 		({ prefixes, items } = await listAll(storageRef));
+		loading = false;
 	});
 </script>
+
+{#if loading}
+	{#each new Array(5) as _}
+		<div class="placeholder animate-pulse h-8 mb-2" />
+	{/each}
+{/if}
 
 {#if prefixes.length}
 	<Accordion>
@@ -33,6 +43,7 @@
 			<AccordionItem>
 				<svelte:fragment slot="lead">(dir)</svelte:fragment>
 				<svelte:fragment slot="summary">{prefix.name}</svelte:fragment>
+
 				<svelte:fragment slot="content">
 					<svelte:self storageRef={prefix} />
 				</svelte:fragment>
@@ -47,4 +58,8 @@
 			<ListBoxItem bind:group={selectItem} name="medium" value={item}>{item.name}</ListBoxItem>
 		{/each}
 	</ListBox>
+{/if}
+
+{#if !loading && !prefixes.length && !items.length}
+	<h5 class="ml-4">This folder is empty</h5>
 {/if}
