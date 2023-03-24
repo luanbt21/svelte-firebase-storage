@@ -6,8 +6,10 @@
 	// Most of your app wide CSS should be put in this file
 	import '../app.postcss';
 
+	import AddModel from '$lib/components/AddModel.svelte';
+	import { Modal, Toast, type ModalComponent } from '@skeletonlabs/skeleton';
 	import { initializeApp } from 'firebase/app';
-	import { Toast } from '@skeletonlabs/skeleton';
+	import type { ModalName } from '../types';
 
 	const firebaseConfig = {
 		apiKey: 'AIzaSyCCKiy9Hl5P4WCjoS0OBBrBALW3VbOVrxk',
@@ -19,10 +21,19 @@
 	};
 
 	initializeApp(firebaseConfig);
+
+	const modalComponentRegistry: Record<ModalName, ModalComponent> = {
+		AddModel: {
+			ref: AddModel
+		}
+	};
 </script>
 
-<div class="m-5">
-	<slot />
+<div class="h-full overflow-auto">
+	<div class="m-4">
+		<slot />
+	</div>
 </div>
 
 <Toast />
+<Modal {modalComponentRegistry} />
