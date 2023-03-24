@@ -28,7 +28,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"file-icons-js": "^1.1.0",
+		"file-extension-icon-js": "^1.1.6",
 		"firebase": "^9.18.0"
 	}
 }
