@@ -1,11 +1,12 @@
 <script lang="ts">
+	import { currentRefStore } from '$lib/store';
 	import { Accordion } from '@skeletonlabs/skeleton';
-
 	import { listAll, type StorageReference } from 'firebase/storage';
 	import FilesView from './FilesView.svelte';
 	import FolderView from './FolderView.svelte';
 
 	export let storageRef: StorageReference;
+	currentRefStore.set(storageRef);
 </script>
 
 {#await listAll(storageRef)}

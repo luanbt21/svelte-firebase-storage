@@ -6,8 +6,8 @@
 	// Most of your app wide CSS should be put in this file
 	import '../app.postcss';
 
+	import { Modal, Toast } from '@skeletonlabs/skeleton';
 	import { initializeApp } from 'firebase/app';
-	import { Toast } from '@skeletonlabs/skeleton';
 
 	const firebaseConfig = {
 		apiKey: 'AIzaSyCCKiy9Hl5P4WCjoS0OBBrBALW3VbOVrxk',
@@ -21,8 +21,11 @@
 	initializeApp(firebaseConfig);
 </script>
 
-<div class="m-5">
-	<slot />
+<div class="h-full overflow-auto">
+	<div class="m-4">
+		<slot />
+	</div>
 </div>
 
 <Toast />
+<Modal />
