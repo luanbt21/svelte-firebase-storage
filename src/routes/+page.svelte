@@ -1,10 +1,12 @@
 <script lang="ts">
 	import AddButton from '$lib/components/AddButton.svelte';
 	import TreeView from '$lib/components/TreeView.svelte';
+	import { currentRefStore } from '$lib/store';
 	import { LightSwitch } from '@skeletonlabs/skeleton';
 	import { getStorage, ref } from 'firebase/storage';
 
 	const storageRef = ref(getStorage());
+	currentRefStore.set(storageRef);
 </script>
 
 <TreeView {storageRef} />

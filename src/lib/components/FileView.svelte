@@ -1,16 +1,10 @@
 <script lang="ts">
-	import { clipboard, toastStore } from '@skeletonlabs/skeleton';
+	import { toastSuccess } from '$lib/utils';
+	import { clipboard } from '@skeletonlabs/skeleton';
 	import { getMaterialFileIcon } from 'file-extension-icon-js';
-	import { getDownloadURL, getMetadata, type StorageReference } from 'firebase/storage';
+	import { getDownloadURL, type StorageReference } from 'firebase/storage';
 
 	export let item: StorageReference;
-
-	const toastSuccess = () => {
-		toastStore.trigger({
-			background: 'variant-filled-success',
-			message: 'url copied'
-		});
-	};
 </script>
 
 <li>
@@ -21,11 +15,13 @@
 	{#await getDownloadURL(item) then url}
 		<div class="btn-group variant-filled">
 			<a href={url} title="Download file" target="_blank" download>⬇️</a>
-			<button use:clipboard={url} on:click={toastSuccess} title="Copy link">📋</button>
+			<button use:clipboard={url} on:click={() => toastSuccess('url copied')} title="Copy link">
+				📋
+			</button>
 		</div>
 	{/await}
 
-	{#await getMetadata(item) then value}
+	<!-- {#await getMetadata(item) then value}
 		<pre>{JSON.stringify(value, null, 2)}</pre>
-	{/await}
+	{/await} -->
 </li>

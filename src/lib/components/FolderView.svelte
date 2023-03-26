@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { AccordionItem } from '@skeletonlabs/skeleton';
-	import type { StorageReference } from 'firebase/storage';
 	import { getMaterialFolderIcon } from 'file-extension-icon-js';
+	import type { StorageReference } from 'firebase/storage';
 
 	export let prefix: StorageReference;
 	let open = false;

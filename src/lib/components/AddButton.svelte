@@ -1,17 +1,16 @@
 <script lang="ts">
 	import { modalStore, type ModalSettings } from '@skeletonlabs/skeleton';
-	import type { ModalName } from '../../types';
+	import AddModel from './AddModel.svelte';
 
-	const component: ModalName = 'AddModel';
 	const d: ModalSettings = {
 		type: 'component',
-		component
+		component: { ref: AddModel }
 	};
 </script>
 
 <div>
 	<button
-		class="btn-icon variant-filled"
+		class="btn-icon variant-filled btn-lg mb-2"
 		on:click={() => {
 			modalStore.trigger(d);
 		}}>⬆️</button
