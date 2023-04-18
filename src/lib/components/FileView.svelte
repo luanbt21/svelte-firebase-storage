@@ -10,7 +10,7 @@
 <li>
 	<img src={getMaterialFileIcon(item.name)} alt="file icon" width="24" />
 
-	<span>{item.name}</span>
+	<a href={'/' + item.fullPath}>{item.name}</a>
 
 	{#await getDownloadURL(item) then url}
 		<div class="btn-group variant-filled">
@@ -20,8 +20,4 @@
 			</button>
 		</div>
 	{/await}
-
-	<!-- {#await getMetadata(item) then value}
-		<pre>{JSON.stringify(value, null, 2)}</pre>
-	{/await} -->
 </li>
