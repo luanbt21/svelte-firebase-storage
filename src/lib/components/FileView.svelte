@@ -2,7 +2,7 @@
 	import { toastSuccess } from '$lib/utils';
 	import { clipboard } from '@skeletonlabs/skeleton';
 	import { getMaterialFileIcon } from 'file-extension-icon-js';
-	import { getDownloadURL, type StorageReference } from 'firebase/storage';
+	import { deleteObject, getDownloadURL, type StorageReference } from 'firebase/storage';
 
 	export let item: StorageReference;
 </script>
@@ -18,6 +18,7 @@
 			<button use:clipboard={url} on:click={() => toastSuccess('url copied')} title="Copy link">
 				📋
 			</button>
+			<button on:click={() => deleteObject(item)}>❌</button>
 		</div>
 	{/await}
 </li>
