@@ -7,6 +7,7 @@
 	import '../app.postcss';
 
 	import { Drawer, Modal, Toast, drawerStore } from '@skeletonlabs/skeleton';
+	import { getMaterialFileIcon } from 'file-extension-icon-js';
 	import { initializeApp } from 'firebase/app';
 	import { getDownloadURL, getMetadata, type StorageReference } from 'firebase/storage';
 
@@ -39,6 +40,7 @@
 	{#if ref}
 		<div class="mx-auto flex h-full max-w-max flex-col p-2">
 			<h3>
+				<img src={getMaterialFileIcon(ref.name)} alt="file icon" class="inline-block" width="24" />
 				{ref.name}
 			</h3>
 			{#await getMetadata(ref) then meta}
@@ -50,25 +52,21 @@
 					<div class="ml-3 flex h-full flex-col justify-evenly">
 						<div>
 							<span class="badge variant-filled">Size</span>
-							<br />
 							{meta.size} bytes
 						</div>
 
 						<div>
 							<span class="badge variant-filled">Type</span>
-							<br />
 							{meta.contentType}
 						</div>
 
 						<div>
 							<span class="badge variant-filled">Created</span>
-							<br />
 							{new Date(meta.timeCreated).toLocaleString()}
 						</div>
 
 						<div>
 							<span class="badge variant-filled">Updated</span>
-							<br />
 							{new Date(meta.updated).toLocaleString()}
 						</div>
 
@@ -76,7 +74,7 @@
 							<span class="badge variant-filled">Download</span>
 
 							<a
-								class="btn-sm btn-icon variant-filled"
+								class="btn-sm variant-filled"
 								href={src}
 								title="Download file"
 								target="_blank"
