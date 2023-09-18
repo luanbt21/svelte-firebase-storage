@@ -22,6 +22,8 @@
 
 	initializeApp(firebaseConfig);
 
+	let key = '';
+
 	let ref: StorageReference | undefined;
 	$: if ($drawerStore && $drawerStore.meta) {
 		ref = $drawerStore.meta.ref;
@@ -30,7 +32,11 @@
 
 <div class="h-full overflow-auto">
 	<div class="m-1">
-		<slot />
+		{#if key === 'ok'}
+			<slot />
+		{:else}
+			<input class="input h-full p-2" type="text" bind:value={key} autofocus />
+		{/if}
 	</div>
 </div>
 
