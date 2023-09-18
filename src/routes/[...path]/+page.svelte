@@ -6,8 +6,9 @@
 	import { currentRefStore } from '$lib/store';
 	import { LightSwitch, drawerStore } from '@skeletonlabs/skeleton';
 	import { getStorage, ref } from 'firebase/storage';
+	import { CHANGE_EVENT } from '$lib/constants';
 
-	const storageRef = ref(getStorage());
+	let storageRef = ref(getStorage());
 	$currentRefStore = storageRef;
 
 	$: if (browser && $page.url.pathname != '/') {
@@ -16,6 +17,14 @@
 			position: 'bottom',
 			meta: { ref: $currentRefStore }
 		});
+	}
+
+	const onChange = () => {
+		storageRef = ref(getStorage());
+	};
+
+	if (document) {
+		document.addEventListener(CHANGE_EVENT, onChange);
 	}
 </script>
 

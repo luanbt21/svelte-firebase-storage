@@ -32,7 +32,7 @@
 
 <div class="h-full overflow-auto">
 	<div class="m-1">
-		{#if key === 'ok'}
+		{#if key.toLowerCase() === 'ok'}
 			<slot />
 		{:else}
 			<input class="input h-full p-2" type="text" bind:value={key} autofocus />

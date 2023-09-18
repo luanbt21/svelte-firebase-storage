@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { CHANGE_EVENT } from '$lib/constants';
 	import { currentRefStore } from '$lib/store';
 	import { toastError, toastSuccess } from '$lib/utils';
 	import { FileDropzone, modalStore, ProgressBar } from '@skeletonlabs/skeleton';
@@ -42,17 +43,17 @@
 			(error) => {
 				toastError(error.message);
 			},
-			() => {
-				getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-					toastSuccess(`File uploaded successfully ${downloadURL}`);
-					modalStore.close();
-				});
+			async () => {
+				const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+				toastSuccess(`File uploaded successfully ${downloadURL}`);
+				document.dispatchEvent(new CustomEvent(CHANGE_EVENT));
+				modalStore.close();
 			}
 		);
 	}
 </script>
 
-<div class="card p-4 w-modal shadow-xl space-y-4">
+<div class="card w-modal space-y-4 p-4 shadow-xl">
 	<header class="text-2xl font-bold">Add File</header>
 	<!-- <article>{$modalStore[0]?.body ?? '(body missing)'}</article> -->
 	<label class="label">

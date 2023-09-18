@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { CHANGE_EVENT } from '$lib/constants';
 	import { toastSuccess } from '$lib/utils';
 	import { clipboard } from '@skeletonlabs/skeleton';
 	import { getMaterialFileIcon } from 'file-extension-icon-js';
@@ -18,7 +19,14 @@
 			<button use:clipboard={url} on:click={() => toastSuccess('url copied')} title="Copy link">
 				📋
 			</button>
-			<button on:click={() => deleteObject(item)}>❌</button>
+			<button
+				on:click={async () => {
+					await deleteObject(item);
+					document.dispatchEvent(new CustomEvent(CHANGE_EVENT));
+				}}
+			>
+				❌
+			</button>
 		</div>
 	{/await}
 </li>

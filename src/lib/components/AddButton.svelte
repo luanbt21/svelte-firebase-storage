@@ -9,10 +9,7 @@
 </script>
 
 <div>
-	<button
-		class="btn-icon variant-filled btn-lg mb-2"
-		on:click={() => {
-			modalStore.trigger(d);
-		}}>⬆️</button
-	>
+	<button class="btn-lg btn-icon variant-filled mb-2" on:click={() => modalStore.trigger(d)}>
+		⬆️
+	</button>
 </div>
