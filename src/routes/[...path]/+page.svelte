@@ -4,13 +4,15 @@
 	import AddButton from '$lib/components/AddButton.svelte';
 	import TreeView from '$lib/components/TreeView.svelte';
 	import { currentRefStore } from '$lib/store';
-	import { LightSwitch, drawerStore } from '@skeletonlabs/skeleton';
+	import { LightSwitch, getDrawerStore } from '@skeletonlabs/skeleton';
 	import { getStorage, ref } from 'firebase/storage';
 	import { CHANGE_EVENT } from '$lib/constants';
+	import { onMount } from 'svelte';
 
 	let storageRef = ref(getStorage());
 	$currentRefStore = storageRef;
 
+	const drawerStore = getDrawerStore();
 	$: if (browser && $page.url.pathname != '/') {
 		$currentRefStore = ref(storageRef, $page.url.pathname.replaceAll('%20', ' '));
 		drawerStore.open({
@@ -23,9 +25,12 @@
 		storageRef = ref(getStorage());
 	};
 
-	if (document) {
+	onMount(() => {
 		document.addEventListener(CHANGE_EVENT, onChange);
-	}
+		return () => {
+			document.removeEventListener(CHANGE_EVENT, onChange);
+		};
+	});
 </script>
 
 <TreeView {storageRef} />

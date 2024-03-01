@@ -1,55 +1,28 @@
 <script lang="ts">
-	import { CHANGE_EVENT } from '$lib/constants';
 	import { currentRefStore } from '$lib/store';
-	import { toastError, toastSuccess } from '$lib/utils';
-	import { FileDropzone, modalStore, ProgressBar } from '@skeletonlabs/skeleton';
+	import { uploadFile } from '$lib/utils';
+	import { FileDropzone, ProgressBar, getToastStore } from '@skeletonlabs/skeleton';
 	import { getMaterialFileIcon } from 'file-extension-icon-js';
-	import {
-		getDownloadURL,
-		getStorage,
-		ref,
-		uploadBytesResumable,
-		type StorageReference
-	} from 'firebase/storage';
-	import { get } from 'svelte/store';
+	import { getStorage, ref } from 'firebase/storage';
+	import { get, writable } from 'svelte/store';
 
 	export let parent: any;
+	export let files: FileList | undefined = undefined;
 
 	let currentRef = get(currentRefStore);
 	let path = currentRef?.fullPath;
 
-	let files: FileList;
 	let fileName = '';
-	let progress = 0;
-
-	$: if (files) {
+	let progress = writable(0);
+	$: if (files?.length) {
 		fileName = files[0].name;
 	}
 
+	const toastStore = getToastStore();
 	function submit() {
 		if (!files) return;
 		if (!currentRef) return;
-		uploadFile(ref(getStorage(), path + '/' + fileName), files[0]);
-	}
-
-	function uploadFile(storageRef: StorageReference, file: File) {
-		const uploadTask = uploadBytesResumable(storageRef, file);
-
-		uploadTask.on(
-			'state_changed',
-			(snapshot) => {
-				progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-			},
-			(error) => {
-				toastError(error.message);
-			},
-			async () => {
-				const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-				toastSuccess(`File uploaded successfully ${downloadURL}`);
-				document.dispatchEvent(new CustomEvent(CHANGE_EVENT));
-				modalStore.close();
-			}
-		);
+		uploadFile(ref(getStorage(), path + '/' + fileName), files[0], toastStore, progress);
 	}
 </script>
 
@@ -72,13 +45,13 @@
 			{/if}
 		</svelte:fragment>
 	</FileDropzone>
-
 	{#if progress}
-		<ProgressBar label="Progress Bar" value={progress} max={100} />
+		<ProgressBar label="Progress Bar" value={$progress} max={100} />
 	{/if}
-	<!-- prettier-ignore -->
 	<footer class="modal-footer {parent.regionFooter}">
-        <button class="btn {parent.buttonNeutral}" on:click={parent.onClose}>{parent.buttonTextCancel}</button>
-        <button class="btn {parent.buttonPositive}" on:click={submit}>Submit</button>
-    </footer>
+		<button class="btn {parent.buttonNeutral}" on:click={parent.onClose}>
+			{parent.buttonTextCancel}
+		</button>
+		<button class="btn {parent.buttonPositive}" on:click={submit}>Submit</button>
+	</footer>
 </div>

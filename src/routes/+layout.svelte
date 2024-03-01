@@ -1,12 +1,7 @@
 <script lang="ts">
-	// The ordering of these imports is critical to your app working properly
-	import '@skeletonlabs/skeleton/themes/theme-modern.css';
-	// If you have source.organizeImports set to true in VSCode, then it will auto change this ordering
-	import '@skeletonlabs/skeleton/styles/all.css';
-	// Most of your app wide CSS should be put in this file
 	import '../app.postcss';
 
-	import { Drawer, Modal, Toast, drawerStore } from '@skeletonlabs/skeleton';
+	import { Drawer, Modal, Toast, initializeStores, getDrawerStore } from '@skeletonlabs/skeleton';
 	import { getMaterialFileIcon } from 'file-extension-icon-js';
 	import { initializeApp } from 'firebase/app';
 	import { getDownloadURL, getMetadata, type StorageReference } from 'firebase/storage';
@@ -21,9 +16,11 @@
 	};
 
 	initializeApp(firebaseConfig);
+	initializeStores();
 
 	let key = '';
 
+	const drawerStore = getDrawerStore();
 	let ref: StorageReference | undefined;
 	$: if ($drawerStore && $drawerStore.meta) {
 		ref = $drawerStore.meta.ref;
@@ -40,7 +37,7 @@
 	</div>
 </div>
 
-<Toast />
+<Toast max={5} />
 <Modal />
 <Drawer>
 	{#if ref}
@@ -57,30 +54,30 @@
 
 					<div class="ml-3 flex h-full flex-col justify-evenly">
 						<div>
-							<span class="badge variant-filled">Size</span>
+							<span class="variant-filled badge">Size</span>
 							{meta.size} bytes
 						</div>
 
 						<div>
-							<span class="badge variant-filled">Type</span>
+							<span class="variant-filled badge">Type</span>
 							{meta.contentType}
 						</div>
 
 						<div>
-							<span class="badge variant-filled">Created</span>
+							<span class="variant-filled badge">Created</span>
 							{new Date(meta.timeCreated).toLocaleString()}
 						</div>
 
 						<div>
-							<span class="badge variant-filled">Updated</span>
+							<span class="variant-filled badge">Updated</span>
 							{new Date(meta.updated).toLocaleString()}
 						</div>
 
 						<div>
-							<span class="badge variant-filled">Download</span>
+							<span class="variant-filled badge">Download</span>
 
 							<a
-								class="btn-sm variant-filled"
+								class="variant-filled btn-sm"
 								href={src}
 								title="Download file"
 								target="_blank"
