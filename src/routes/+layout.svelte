@@ -1,15 +1,11 @@
 <script lang="ts">
-	// The ordering of these imports is critical to your app working properly
-	import '@skeletonlabs/skeleton/themes/theme-modern.css';
-	// If you have source.organizeImports set to true in VSCode, then it will auto change this ordering
-	import '@skeletonlabs/skeleton/styles/all.css';
-	// Most of your app wide CSS should be put in this file
+	import { goto } from '$app/navigation';
 	import '../app.postcss';
 
-	import { Drawer, Modal, Toast, drawerStore } from '@skeletonlabs/skeleton';
+	import { Drawer, Modal, Toast, initializeStores, getDrawerStore } from '@skeletonlabs/skeleton';
 	import { getMaterialFileIcon } from 'file-extension-icon-js';
 	import { initializeApp } from 'firebase/app';
-	import { getDownloadURL, getMetadata, type StorageReference } from 'firebase/storage';
+	import { getDownloadURL, type FullMetadata } from 'firebase/storage';
 
 	const firebaseConfig = {
 		apiKey: 'AIzaSyCCKiy9Hl5P4WCjoS0OBBrBALW3VbOVrxk',
@@ -21,12 +17,15 @@
 	};
 
 	initializeApp(firebaseConfig);
+	initializeStores();
 
+	// let key = 'ok';
 	let key = '';
 
-	let ref: StorageReference | undefined;
-	$: if ($drawerStore && $drawerStore.meta) {
-		ref = $drawerStore.meta.ref;
+	const drawerStore = getDrawerStore();
+	let fullMetadata: FullMetadata | undefined;
+	$: if ($drawerStore?.meta) {
+		fullMetadata = $drawerStore.meta.fullMetadata;
 	}
 </script>
 
@@ -40,47 +39,56 @@
 	</div>
 </div>
 
-<Toast />
+<Toast max={5} position="t" />
 <Modal />
-<Drawer>
-	{#if ref}
+<Drawer
+	on:backdrop={() => {
+		goto('/');
+	}}
+>
+	{#if fullMetadata}
 		<div class="mx-auto flex h-full max-w-max flex-col p-2">
 			<h3>
-				<img src={getMaterialFileIcon(ref.name)} alt="file icon" class="inline-block" width="24" />
-				{ref.name}
+				<img
+					src={getMaterialFileIcon(fullMetadata.name)}
+					alt="file icon"
+					class="inline-block"
+					width="24"
+				/>
+				{fullMetadata.name}
 			</h3>
-			{#await getMetadata(ref) then meta}
-				{#await getDownloadURL(ref) then src}
-					{#if meta.contentType?.includes('image/')}
+			{#if fullMetadata.ref}
+				{#await getDownloadURL(fullMetadata.ref) then src}
+					{#if fullMetadata.contentType?.includes('image/')}
 						<img class="mx-auto mb-2" {src} alt="preview" />
 					{/if}
 
 					<div class="ml-3 flex h-full flex-col justify-evenly">
 						<div>
-							<span class="badge variant-filled">Size</span>
-							{meta.size} bytes
+							<span class="variant-filled badge">Size</span>
+							{fullMetadata.size} bytes
 						</div>
 
 						<div>
-							<span class="badge variant-filled">Type</span>
-							{meta.contentType}
+							<span class="variant-filled badge">Type</span>
+							{fullMetadata.contentType}
 						</div>
 
 						<div>
-							<span class="badge variant-filled">Created</span>
-							{new Date(meta.timeCreated).toLocaleString()}
+							<span class="variant-filled badge">Created</span>
+							{new Date(fullMetadata.timeCreated).toLocaleString()}
 						</div>
 
 						<div>
-							<span class="badge variant-filled">Updated</span>
-							{new Date(meta.updated).toLocaleString()}
+							<span class="variant-filled badge">Updated</span>
+							{new Date(fullMetadata.updated).toLocaleString()}
 						</div>
 
 						<div>
-							<span class="badge variant-filled">Download</span>
+							<span class="variant-filled badge">Download</span>
 
 							<a
-								class="btn-sm variant-filled"
+								class="variant-filled btn-sm"
 								href={src}
 								title="Download file"
 								target="_blank"
@@ -89,7 +97,7 @@
 						</div>
 					</div>
 				{/await}
-			{/await}
+			{/if}
 		</div>
 	{/if}
 </Drawer>
