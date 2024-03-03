@@ -2,9 +2,16 @@
 	import { AccordionItem } from '@skeletonlabs/skeleton';
 	import { getMaterialFolderIcon } from 'file-extension-icon-js';
 	import type { StorageReference } from 'firebase/storage';
+	import { currentRefStore } from '$lib/store';
 
 	export let prefix: StorageReference;
 	let open = false;
+
+	$: if (open) {
+		currentRefStore.set(prefix);
+	} else {
+		currentRefStore.set(prefix.parent);
+	}
 </script>
 
 <AccordionItem on:toggle={({ detail }) => (open = detail.open)}>

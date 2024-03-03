@@ -1,10 +1,11 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import '../app.postcss';
 
 	import { Drawer, Modal, Toast, initializeStores, getDrawerStore } from '@skeletonlabs/skeleton';
 	import { getMaterialFileIcon } from 'file-extension-icon-js';
 	import { initializeApp } from 'firebase/app';
-	import { getDownloadURL, getMetadata, type StorageReference } from 'firebase/storage';
+	import { getDownloadURL, type FullMetadata } from 'firebase/storage';
 
 	const firebaseConfig = {
 		apiKey: 'AIzaSyCCKiy9Hl5P4WCjoS0OBBrBALW3VbOVrxk',
@@ -18,12 +19,13 @@
 	initializeApp(firebaseConfig);
 	initializeStores();
 
+	// let key = 'ok';
 	let key = '';
 
 	const drawerStore = getDrawerStore();
-	let ref: StorageReference | undefined;
-	$: if ($drawerStore && $drawerStore.meta) {
-		ref = $drawerStore.meta.ref;
+	let fullMetadata: FullMetadata | undefined;
+	$: if ($drawerStore?.meta) {
+		fullMetadata = $drawerStore.meta.fullMetadata;
 	}
 </script>
 
@@ -37,40 +39,49 @@
 	</div>
 </div>
 
-<Toast max={5} />
+<Toast max={5} position="t" />
 <Modal />
-<Drawer>
-	{#if ref}
+<Drawer
+	on:backdrop={() => {
+		goto('/');
+	}}
+>
+	{#if fullMetadata}
 		<div class="mx-auto flex h-full max-w-max flex-col p-2">
 			<h3>
-				<img src={getMaterialFileIcon(ref.name)} alt="file icon" class="inline-block" width="24" />
-				{ref.name}
+				<img
+					src={getMaterialFileIcon(fullMetadata.name)}
+					alt="file icon"
+					class="inline-block"
+					width="24"
+				/>
+				{fullMetadata.name}
 			</h3>
-			{#await getMetadata(ref) then meta}
-				{#await getDownloadURL(ref) then src}
-					{#if meta.contentType?.includes('image/')}
+			{#if fullMetadata.ref}
+				{#await getDownloadURL(fullMetadata.ref) then src}
+					{#if fullMetadata.contentType?.includes('image/')}
 						<img class="mx-auto mb-2" {src} alt="preview" />
 					{/if}
 
 					<div class="ml-3 flex h-full flex-col justify-evenly">
 						<div>
 							<span class="variant-filled badge">Size</span>
-							{meta.size} bytes
+							{fullMetadata.size} bytes
 						</div>
 
 						<div>
 							<span class="variant-filled badge">Type</span>
-							{meta.contentType}
+							{fullMetadata.contentType}
 						</div>
 
 						<div>
 							<span class="variant-filled badge">Created</span>
-							{new Date(meta.timeCreated).toLocaleString()}
+							{new Date(fullMetadata.timeCreated).toLocaleString()}
 						</div>
 
 						<div>
 							<span class="variant-filled badge">Updated</span>
-							{new Date(meta.updated).toLocaleString()}
+							{new Date(fullMetadata.updated).toLocaleString()}
 						</div>
 
 						<div>
@@ -86,7 +97,7 @@
 						</div>
 					</div>
 				{/await}
-			{/await}
+			{/if}
 		</div>
 	{/if}
 </Drawer>

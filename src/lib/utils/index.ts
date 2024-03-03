@@ -9,16 +9,28 @@ const ToastType = {
 	warning: 'variant-filled-warning'
 };
 
-export const toast = (
+export function toast(
 	store: ReturnType<typeof getToastStore>,
 	type: keyof typeof ToastType,
 	message: string
-) => {
+) {
 	store.trigger({
 		background: ToastType[type],
 		message
 	});
-};
+}
+
+export function formatBytes(bytes: number, decimals = 2): string {
+	if (bytes == 0) return '0 Bytes';
+	const k = 1024;
+	const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+	const base = Math.floor(Math.log(bytes) / Math.log(k));
+	return parseFloat((bytes / Math.pow(k, base)).toFixed(decimals)) + ' ' + sizes[base];
+}
+
+export function isFile(file: File) {
+	return !!file.type || file.name.endsWith('.iso');
+}
 
 export function uploadFile(
 	storageRef: StorageReference,
