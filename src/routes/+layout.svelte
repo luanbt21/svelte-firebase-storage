@@ -29,14 +29,12 @@
 	}
 </script>
 
-<div class="h-full overflow-auto">
-	<div class="m-1">
-		{#if key.toLowerCase() === 'ok'}
-			<slot />
-		{:else}
-			<input class="input h-full p-2" type="text" bind:value={key} autofocus />
-		{/if}
-	</div>
+<div class="container mx-auto overflow-auto">
+	{#if key.toLowerCase() === 'ok'}
+		<slot />
+	{:else}
+		<input class="input h-full p-2" type="text" bind:value={key} autofocus />
+	{/if}
 </div>
 
 <Toast max={5} position="t" />

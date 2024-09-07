@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
+	import { uploadFiles, isDragging } from '$lib/store';
 	import { page } from '$app/stores';
 	import TreeView from '$lib/components/TreeView.svelte';
 	import UploadFiles from '$lib/components/UploadFiles.svelte';
@@ -31,6 +32,27 @@
 			});
 	}
 
+	function handleDragEnter(event: DragEvent) {
+		event.preventDefault();
+		$isDragging = true;
+	}
+
+	function handleDragLeave(event: DragEvent) {
+		event.preventDefault();
+		$isDragging = false;
+	}
+
+	function handleDragOver(event: DragEvent) {
+		event.preventDefault();
+		$isDragging = true;
+	}
+
+	function handleDrop(event: DragEvent) {
+		event.preventDefault();
+		$isDragging = false;
+		$uploadFiles = Array.from(event.dataTransfer?.files ?? []);
+	}
+
 	const onChange = () => {
 		storageRef = ref(getStorage());
 	};
@@ -43,10 +65,18 @@
 	});
 </script>
 
-<UploadFiles />
-<hr class="!border-t-8 !border-double" />
+<div
+	class="min-h-screen"
+	on:dragenter={handleDragEnter}
+	on:dragleave={handleDragLeave}
+	on:dragover={handleDragOver}
+	on:drop={handleDrop}
+>
+	<UploadFiles />
+	<hr class="!border-t-8 !border-double" />
 
-<TreeView {storageRef} />
-<div class="absolute bottom-4 right-4 gap-2 text-center">
-	<LightSwitch />
+	<TreeView {storageRef} />
+	<div class="absolute bottom-4 right-4 gap-2 text-center">
+		<LightSwitch />
+	</div>
 </div>

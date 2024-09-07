@@ -9,7 +9,7 @@
 
 {#await listAll(storageRef)}
 	{#each new Array(5) as _}
-		<div class="placeholder animate-pulse h-8 mb-2" />
+		<div class="placeholder mb-2 h-8 animate-pulse" />
 	{/each}
 {:then { prefixes, items }}
 	{#if prefixes.length}

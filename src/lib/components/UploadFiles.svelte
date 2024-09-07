@@ -6,10 +6,13 @@
 	import { getStorage, ref } from 'firebase/storage';
 	import { onMount } from 'svelte';
 	import UploadFile from './UploadFile.svelte';
+	import { uploadFiles, isDragging } from '$lib/store';
 
 	let open = false;
+	$: if (!open) {
+		open = $isDragging;
+	}
 
-	let files: File[] = [];
 	let ignoreFiles: File[] = [];
 
 	let path = $currentRefStore?.fullPath;
@@ -19,13 +22,13 @@
 	const toastStore = getToastStore();
 
 	function clear() {
-		files = [];
+		$uploadFiles = [];
 		ignoreFiles = [];
 	}
 
 	function removeFile(idx: number) {
-		files.splice(idx, 1);
-		files = files;
+		$uploadFiles.splice(idx, 1);
+		$uploadFiles = $uploadFiles;
 	}
 
 	function onChange(event: Event) {
@@ -37,15 +40,15 @@
 
 	function filterFiles(fileList: FileList) {
 		const inputFiles = Array.from(fileList);
-		files = inputFiles.filter((file) => isFile(file));
-		if (files.length !== inputFiles.length) {
+		$uploadFiles = inputFiles.filter((file) => isFile(file));
+		if ($uploadFiles.length !== inputFiles.length) {
 			ignoreFiles = inputFiles.filter((file) => !isFile(file));
 			toast(toastStore, 'warning', 'Folders or unknown files will be ignore, please check!');
 		}
 	}
 
 	function uploadAll() {
-		if (!files) return;
+		if (!$uploadFiles) return;
 		if (!$currentRefStore) return;
 		for (const child of childRefs) {
 			child.upload();
@@ -84,22 +87,29 @@
 			</label>
 			<FileDropzone name="files" multiple on:change={onChange}>
 				<svelte:fragment slot="lead">
-					<img src={getMaterialFileIcon('')} alt="file icon" class="mx-auto w-10" />
+					<img
+						src={getMaterialFileIcon('')}
+						alt="file icon"
+						class="mx-auto w-10"
+						class:animate-shake={$isDragging}
+					/>
 				</svelte:fragment>
 
 				<svelte:fragment slot="message">
-					{#if files?.length}
-						{files.length} files will be upload!
+					{#if $isDragging}
+						<strong>Drop!!! I will catch it</strong>
+					{:else if $uploadFiles?.length}
+						{$uploadFiles.length} files will be upload!
 					{:else}
 						<strong>Upload files</strong> or drag and drop
 					{/if}
 				</svelte:fragment>
 			</FileDropzone>
 
-			{#if files?.length}
+			{#if $uploadFiles?.length}
 				<div class="m-4">
 					<ul class="max-h-60 overflow-y-scroll">
-						{#each files as file, i}
+						{#each $uploadFiles as file, i}
 							<UploadFile
 								remove={() => {
 									removeFile(i);
