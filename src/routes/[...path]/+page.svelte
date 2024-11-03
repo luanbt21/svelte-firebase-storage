@@ -11,26 +11,28 @@
 	import { onMount } from 'svelte';
 	import { toast } from '$lib/utils';
 
-	let storageRef = ref(getStorage());
+	let storageRef = $state(ref(getStorage()));
 	$currentRefStore = storageRef;
 
 	const drawerStore = getDrawerStore();
 	const toastStore = getToastStore();
-	$: if (browser && $page.url.pathname != '/') {
-		const filePath = decodeURI($page.url.pathname);
-		const reference = ref(storageRef, filePath);
-		getMetadata(reference)
-			.then((fullMetadata) => {
-				drawerStore.open({
-					position: 'bottom',
-					meta: { fullMetadata }
+	$effect(() => {
+		if (browser && $page.url.pathname !== '/') {
+			const filePath = decodeURI($page.url.pathname);
+			const reference = ref(storageRef, filePath);
+			getMetadata(reference)
+				.then((fullMetadata) => {
+					drawerStore.open({
+						position: 'bottom',
+						meta: { fullMetadata }
+					});
+				})
+				.catch((e: Error) => {
+					toast(toastStore, 'error', `get data for ${filePath} have failed`);
+					console.log(e.stack);
 				});
-			})
-			.catch((e: Error) => {
-				toast(toastStore, 'error', `get data for ${filePath} have failed`);
-				console.log(e.stack);
-			});
-	}
+		}
+	});
 
 	function handleDragEnter(event: DragEvent) {
 		event.preventDefault();
@@ -67,10 +69,10 @@
 
 <div
 	class="min-h-screen"
-	on:dragenter={handleDragEnter}
-	on:dragleave={handleDragLeave}
-	on:dragover={handleDragOver}
-	on:drop={handleDrop}
+	ondragenter={handleDragEnter}
+	ondragleave={handleDragLeave}
+	ondragover={handleDragOver}
+	ondrop={handleDrop}
 >
 	<UploadFiles />
 	<hr class="!border-t-8 !border-double" />

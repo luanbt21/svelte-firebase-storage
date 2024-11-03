@@ -6,6 +6,11 @@
 	import { getMaterialFileIcon } from 'file-extension-icon-js';
 	import { initializeApp } from 'firebase/app';
 	import { getDownloadURL, type FullMetadata } from 'firebase/storage';
+	interface Props {
+		children?: import('svelte').Snippet;
+	}
+
+	let { children }: Props = $props();
 
 	const firebaseConfig = {
 		apiKey: 'AIzaSyCCKiy9Hl5P4WCjoS0OBBrBALW3VbOVrxk',
@@ -20,18 +25,20 @@
 	initializeStores();
 
 	// let key = 'ok';
-	let key = '';
+	let key = $state('');
 
 	const drawerStore = getDrawerStore();
-	let fullMetadata: FullMetadata | undefined;
-	$: if ($drawerStore?.meta) {
-		fullMetadata = $drawerStore.meta.fullMetadata;
-	}
+	let fullMetadata: FullMetadata | undefined = $state();
+	$effect(() => {
+		if ($drawerStore?.meta) {
+			fullMetadata = $drawerStore.meta.fullMetadata;
+		}
+	});
 </script>
 
 <div class="container mx-auto overflow-auto">
 	{#if key.toLowerCase() === 'ok'}
-		<slot />
+		{@render children?.()}
 	{:else}
 		<input class="input h-full p-2" type="text" bind:value={key} autofocus />
 	{/if}

@@ -8,16 +8,18 @@
 	import UploadFile from './UploadFile.svelte';
 	import { uploadFiles, isDragging } from '$lib/store';
 
-	let open = false;
-	$: if (!open) {
-		open = $isDragging;
-	}
+	let open = $state(false);
+	$effect(() => {
+		if (!open) {
+			open = $isDragging;
+		}
+	});
 
 	let ignoreFiles: File[] = [];
 
-	let path = $currentRefStore?.fullPath;
+	let path = $state($currentRefStore?.fullPath);
 
-	let childRefs: UploadFile[] = [];
+	let childRefs: (typeof UploadFile)[] = $state([]);
 
 	const toastStore = getToastStore();
 
@@ -70,9 +72,13 @@
 
 <Accordion class="rounded-3xl bg-surface-600">
 	<AccordionItem bind:open>
-		<svelte:fragment slot="lead">⬆</svelte:fragment>
-		<svelte:fragment slot="summary">Upload Files</svelte:fragment>
-		<svelte:fragment slot="content">
+		{#snippet lead()}
+			⬆
+		{/snippet}
+		{#snippet summary()}
+			Upload Files
+		{/snippet}
+		{#snippet content()}
 			<label class="label">
 				<span>Path</span>
 				<input
@@ -80,22 +86,22 @@
 					type="text"
 					placeholder="Enter path here"
 					value={$currentRefStore?.fullPath}
-					on:change={(e) => {
+					onchange={(e) => {
 						path = e.currentTarget.value;
 					}}
 				/>
 			</label>
 			<FileDropzone name="files" multiple on:change={onChange}>
-				<svelte:fragment slot="lead">
+				{#snippet lead()}
 					<img
 						src={getMaterialFileIcon('')}
 						alt="file icon"
 						class="mx-auto w-10"
 						class:animate-shake={$isDragging}
 					/>
-				</svelte:fragment>
+				{/snippet}
 
-				<svelte:fragment slot="message">
+				{#snippet message()}
 					{#if $isDragging}
 						<strong>Drop!!! I will catch it</strong>
 					{:else if $uploadFiles?.length}
@@ -103,7 +109,7 @@
 					{:else}
 						<strong>Upload files</strong> or drag and drop
 					{/if}
-				</svelte:fragment>
+				{/snippet}
 			</FileDropzone>
 
 			{#if $uploadFiles?.length}
@@ -124,11 +130,11 @@
 			{/if}
 
 			<div class="flex place-content-evenly">
-				<button type="button" class="variant-filled-warning btn" on:click={clear}>Clear</button>
-				<button type="button" class="variant-filled-primary btn" on:click={uploadAll}>
+				<button type="button" class="variant-filled-warning btn" onclick={clear}>Clear</button>
+				<button type="button" class="variant-filled-primary btn" onclick={uploadAll}>
 					Upload all
 				</button>
 			</div>
-		</svelte:fragment>
+		{/snippet}
 	</AccordionItem>
 </Accordion>

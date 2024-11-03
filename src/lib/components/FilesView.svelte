@@ -2,7 +2,11 @@
 	import type { StorageReference } from 'firebase/storage';
 	import FileView from './FileView.svelte';
 
-	export let items: StorageReference[];
+	interface Props {
+		items: StorageReference[];
+	}
+
+	const { items }: Props = $props();
 </script>
 
 <ul class="list ml-3">

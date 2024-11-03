@@ -1,3 +1,6 @@
 {
-	"cSpell.words": ["skeletonlabs"]
+	"cSpell.words": [
+		"skeletonlabs"
+	],
+	"oxc.enable": false
 }

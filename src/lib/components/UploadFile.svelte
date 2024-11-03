@@ -5,9 +5,13 @@
 	import { type StorageReference } from 'firebase/storage';
 	import { writable } from 'svelte/store';
 
-	export let file: File;
-	export let storageRef: StorageReference;
-	export let remove: () => void;
+	interface Props {
+		file: File;
+		storageRef: StorageReference;
+		remove: () => void;
+	}
+
+	let { file, storageRef, remove }: Props = $props();
 
 	let progress = writable(0);
 
@@ -32,7 +36,7 @@
 		{/if}
 	{:else}
 		<span class="variant-filled badge">{formatBytes(file.size)}</span>
-		<button class="variant-filled-primary btn-icon" on:click={upload}>⬆️</button>
-		<button class="variant-filled-warning btn-icon" on:click={remove}>❌</button>
+		<button class="variant-filled-primary btn-icon" onclick={upload}>⬆️</button>
+		<button class="variant-filled-warning btn-icon" onclick={remove}>❌</button>
 	{/if}
 </li>

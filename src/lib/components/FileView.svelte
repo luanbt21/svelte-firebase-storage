@@ -5,7 +5,11 @@
 	import { getMaterialFileIcon } from 'file-extension-icon-js';
 	import { deleteObject, getDownloadURL, type StorageReference } from 'firebase/storage';
 
-	export let item: StorageReference;
+	interface Props {
+		item: StorageReference;
+	}
+
+	const { item }: Props = $props();
 	const toastStore = getToastStore();
 	const modalStore = getModalStore();
 
@@ -34,12 +38,12 @@
 			<a href={url} title="Download file" target="_blank" download>⬇️</a>
 			<button
 				use:clipboard={url}
-				on:click={() => toast(toastStore, 'success', 'url copied')}
+				onclick={() => toast(toastStore, 'success', 'url copied')}
 				title="Copy link"
 			>
 				📋
 			</button>
-			<button on:click={deleteFile}> ❌ </button>
+			<button onclick={deleteFile}> ❌ </button>
 		</div>
 	{/await}
 </li>
